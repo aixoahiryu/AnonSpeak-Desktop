@@ -1,0 +1,23 @@
+{
+  "name": "anonspeak-desktop",
+  "version": "1.0.0",
+  "description": "Desktop client for AnonSpeak",
+  "main": "main.js",
+  "scripts": {
+	"start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aixoahiryu/AnonSpeak-Desktop.git"
+  },
+  "author": "Zeta Lockhart",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aixoahiryu/AnonSpeak-Desktop/issues"
+  },
+  "homepage": "https://github.com/aixoahiryu/AnonSpeak-Desktop#readme",
+  "devDependencies": {
+    "electron": "^5.0.3"
+  }
+}
