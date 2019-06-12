@@ -2,6 +2,28 @@
 <html lang="en">
 
 <head>
+	<style>
+		.drag{
+			-webkit-app-region: drag;
+			/*-webkit-user-select: none;*/
+		}
+		input{
+			-webkit-app-region: no-drag;
+		}
+
+		::-webkit-scrollbar{
+			width: 8px;
+			height: 8px;
+		}
+
+		::-webkit-scrollbar-track{
+			background-color: black;
+		}
+
+		::-webkit-scrollbar-thumb{
+			background-color: rgb(150, 150, 150);
+		}
+	</style>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<!-- Meta, title, CSS, favicons, etc. -->
 	<meta charset="utf-8">
@@ -25,7 +47,7 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js@2.9.3/themes/introjs-modern.css">
 </head>
 
-<body class="login" style="color:white; background-image:url('../build/images/bg-01.jpg'); background-size: cover">
+<body class="login drag" style="color:white; background-image:url('../build/images/bg-01.jpg'); background-repeat:no-repeat; height:100vh; width: 100%">
 	<div>
 		<a class="hiddenanchor" id="signin"></a>
 

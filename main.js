@@ -4,15 +4,16 @@ let win;
 
 function createWindow () {
   win = new BrowserWindow({
-    width: 1024,
+    width: 1280,
     height: 800,
     frame: false,
+    titleBarStyle: 'hidden',
     webPreferences: {
       nodeIntegration: true
     }
   })
 
-  win.loadURL('http://localhost:80')
+  win.loadURL('http://localhost:7735')
   // win.webContents.openDevTools()
   win.on('closed', () => {
     win = null
