@@ -4,7 +4,12 @@ var cookie1 = require("cookie-parser");
 var bodyParser = require("body-parser");
 var app = express();
 
-var server = app.listen(7735, function () {
+var server_config = JSON.parse(fs.readFileSync("config.json"));
+const port = process.env.PORT || server_config.port;
+var server_mode = server_config.server_mode;
+var remote = server_config.remote;
+
+var server = app.listen(port, function () {
 	var host = server.address().address;
 	var port = server.address().port;
 
@@ -728,64 +733,86 @@ app.post('/admin/notice', function (req, res) {
 	res.redirect('/admin/notice');
 })
 
-/*
-var numUsers = 0;
+//----------------------API----------------------
+app.get('/api/update', function (req, res) {
+	res.setHeader("Content-Type", "application/json");
 
-io.on('connection', (socket) => {
-	var addedUser = false;
+	var data1 = fs.readFileSync('database/update.json');
+	res.send(data1);
+})
 
-	// when the client emits 'new message', this listens and executes
-	socket.on('new message', (data) => {
-		// we tell the client to execute 'new message'
-		socket.broadcast.emit('new message', {
-			username: socket.username,
-			message: data
-		});
-	});
+app.get('/api/message/:id', function (req, res) {
+	res.setHeader("Content-Type", "application/json");
 
-	// when the client emits 'add user', this listens and executes
-	socket.on('add user', (username) => {
-		console.log(username);
-		if (addedUser) return;
+	chatdata = fs.readFileSync('database/chatroom/' + req.params.id + '.txt');
+	res.send(chatdata);
+})
 
-		// we store the username in the socket session for this client
-		socket.username = username;
-		++numUsers;
-		addedUser = true;
-		socket.emit('login', {
-			numUsers: numUsers
-		});
-		// echo globally (all clients) that a person has connected
-		socket.broadcast.emit('user joined', {
-			username: socket.username,
-			numUsers: numUsers
-		});
-	});
+app.post('/api/message', function (req, res) {
+	io.emit('room' + req.body.room, req.body.msg);
+	fs.appendFileSync('database/chatroom/'+req.body.room+'.txt', '<li>' + req.body.msg + '</li> \r\n');
+	res.send('Success');
+})
 
-	// when the client emits 'typing', we broadcast it to others
-	socket.on('typing', () => {
-		socket.broadcast.emit('typing', {
-			username: socket.username
-		});
-	});
+app.get('/api/user/:id', function (req, res) {
+	res.setHeader("Content-Type", "application/json");
 
-	// when the client emits 'stop typing', we broadcast it to others
-	socket.on('stop typing', () => {
-		socket.broadcast.emit('stop typing', {
-			username: socket.username
-		});
-	});
+	var profile1 = fs.readFileSync('database/profile/' + req.params.id + '.json');
+	res.send(profile1);
+})
 
-	// when the user disconnects.. perform this
-	socket.on('disconnect', () => {
-		if (addedUser) {
-			--numUsers;
+app.post('/api/user', function (req, res) {
+	var profile1 = fs.readFileSync('database/profile/' + req.body.id + '.json');
+	var profile2 = req.body.profile;
+	var json1 = JSON.parse(profile1);
 
-			// echo globally that this client has left
-			socket.broadcast.emit('user left', {
-				username: socket.username,
-				numUsers: numUsers
-			});
+	json1.avatar = profile2.avatar;
+	json1.name = profile2.name;
+	json1.address = profile2.address;
+	json1.job = profile2.job;
+	json1.website = profile2.website;
+	json1.description = profile2.description;
+	json1.p1 = profile2.p1;
+	json1.p2 = profile2.p2;
+	json1.p3 = profile2.p3;
+	json1.p4 = profile2.p4;
+
+	var userdata = JSON.stringify(json1);
+	fs.writeFileSync('database/profile/' + req.body.id + '.json', userdata, { flag: "w+" });
+	res.send('Success');
+})
+
+app.post('/api/password', function (req, res) {
+	var userdata = fs.readFileSync('database/account/' + req.body.id + '.json');
+	var json1 = JSON.parse(userdata);
+
+	if ((req.body.password_old == json1.password) && (req.body.password_1 == req.body.password_2)) {
+		json1.password = req.body.password_1;
+		var userdata = JSON.stringify(json1);
+		fs.writeFileSync('database/account/' + req.body.id + '.json', userdata);
+		res.send('Success');
+	}
+	else { res.send("Failed"); }
+})
+
+app.post('/api/add-friend', function (req, res) {
+	if (req.body.friendid != '' && fs.existsSync('database/account/' + req.body.id + '.json')) {
+		if (fs.existsSync('database/friendlist/' + req.body.id + '.json') == false) {
+			fs.appendFileSync('database/friendlist/' + req.body.id + '.json', req.body.friendid + ',', { flag: "a+" });
 		}
-	});
-});*/
+		else {
+			var friendlist = fs.readFileSync('database/friendlist/' + req.body.id + '.json');
+			var friendarray = friendlist.toString().split(',');
+			if (friendarray.includes(req.body.friendid) == false) {
+				fs.appendFileSync('database/friendlist/' + req.body.id + '.json', req.body.friendid + ',');
+			}
+		}
+	}
+
+	res.send('Success');
+})
+
+app.post('/api/authenticate', function (req, res) {
+
+	res.send('Success');
+})

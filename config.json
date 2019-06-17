@@ -1,4 +1,5 @@
 {
+	"port": 7735,
 	"server_mode": false,
 	"remote": "https://anon-speak.herokuapp.com/"
 }
