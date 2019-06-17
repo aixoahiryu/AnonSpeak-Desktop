@@ -97,3 +97,4 @@
 <li><font>madcat28651</font>: undefined</li> 
 <li><font>madcat28651</font>: undefined</li> 
 <li><font>madcat28651</font>: undefined</li> 
+<li><a style="color:blue" href="/profile?id=test2">test2</a>: test2</li> 

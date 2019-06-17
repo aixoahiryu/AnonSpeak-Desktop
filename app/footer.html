@@ -134,7 +134,8 @@
 	}
 
 	$(function () {
-		var socket = io();
+		var socket = new io('madcatremote');
+		var socket2 = io();
 		var username = $('#username').text();
 		var chatcolor = '<font>';
 		if ($('#type').text() == 'User') chatcolor = '<a style="color:blue" href="/profile?id=' + username + '">';
@@ -154,12 +155,14 @@
 
 		$('form#chatio').submit(function () {
 			socket.emit('room', chatcolor + username + '</a>: ' + $('#m').val());
+			madcatsecondsocket
 			$('#m').val('');
 			return false;
 		});
 		socket.on('room', function (msg) {
 			$('#messages').append($('<li>').html(msg));
 		});
+		// madcatsecondmsg
 
 		//if($('#type').text() == 'Administrator') $('#footer1').remove();
 

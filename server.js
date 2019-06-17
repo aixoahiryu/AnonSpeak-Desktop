@@ -36,6 +36,19 @@ function mainpage(panel, username, room, type) {
 	var topmenu2 = topmenu.toString().replace('madcat28651', username);
 
 	var footer2 = footer.toString().replace(/room*'/g, room + "'");
+	if(!server_mode) {
+		footer2 = footer2.toString().replace('madcatremote', remote);
+		footer2 = footer2.toString().replace('madcatsecondsocket', `socket2.emit('room', chatcolor + username + '</a>: ' + $('#m').val());`);
+		// footer2 = footer2.toString().replace('madcatsecondmsg', `socket.on('room', function (msg) {
+		// 	$('#messages').append($('<li>').html(msg));
+		// });`);
+		footer2 = footer2.toString().replace(/room*'/g, room + "'");
+	}
+	else{
+		footer2 = footer2.toString().replace('madcatremote', '');
+		footer2 = footer2.toString().replace('madcatsecondsocket', '');
+		footer2 = footer2.toString().replace('madcatsecondmsg', '');
+	}
 
 	if (fs.existsSync('database/profile/' + username + '.json')) {
 		var profile1 = fs.readFileSync('database/profile/' + username + '.json');
