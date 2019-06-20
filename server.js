@@ -2,6 +2,7 @@ var fs = require("fs");
 var express = require("express");
 var cookie1 = require("cookie-parser");
 var bodyParser = require("body-parser");
+var http = require("http");
 var app = express();
 
 var server_config = JSON.parse(fs.readFileSync("config.json"));
@@ -476,6 +477,11 @@ app.post('/options', function (req, res) {
 
 	var userdata = JSON.stringify(json1);
 	fs.writeFileSync('database/profile/' + req.cookies["username"] + '.json', userdata);
+		
+	if(!server_mode){
+		
+	}
+
 	res.redirect('/options');
 })
 
