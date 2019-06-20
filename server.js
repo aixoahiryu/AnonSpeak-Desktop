@@ -493,6 +493,11 @@ app.post('/options2', function (req, res) {
 		json1.password = req.body.password_1;
 		var userdata = JSON.stringify(json1);
 		fs.writeFileSync('database/account/' + req.cookies["username"] + '.json', userdata);
+		
+		if(!server_mode){
+		
+		}
+
 		res.redirect('/options');
 	}
 	else { res.send("Đổi mật khẩu không thành công"); }
