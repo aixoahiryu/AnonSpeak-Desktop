@@ -44,6 +44,9 @@ function mainpage(panel, username, room, type) {
 		// footer2 = footer2.toString().replace('madcatsecondmsg', `socket.on('room', function (msg) {
 		// 	$('#messages').append($('<li>').html(msg));
 		// });`);
+		footer2 = footer2.toString().replace('madcatsecondsocketupdate', `socket.on('update', function (msg) {
+			socket2.emit('update', msg);
+		});`);
 		footer2 = footer2.toString().replace(/room*'/g, room + "'");
 	}
 	else{
@@ -202,7 +205,18 @@ function NoticeList() {
 	return noticedata;
 }
 
-//-------------------Login-------------------
+function getUser(username){
+	if(!server_mode){
+		request(remote + 'api/profile/' + username, function (error, response, body) {
+			fs.writeFileSync('database/profile/' + username + '.json', response.body, { flag: "w+" });
+		});
+		request(remote + 'api/account/' + username, function (error, response, body) {
+			fs.writeFileSync('database/account/' + username + '.json', response.body, { flag: "w+" });
+		});
+	}
+}
+
+//-------------------Main-------------------
 app.get('/', function (req, res) {
 	console.log(req.cookies);
 
@@ -280,18 +294,38 @@ app.post('/login', function (req, res) {
 })
 
 app.post('/login2', function (req, res) {
-
 	res.set('Content-Type', 'Text/Html');
-	if (fs.existsSync('database/account/' + req.body.username + '.json')) {
-		var userdata = fs.readFileSync('database/account/' + req.body.username + '.json');
-		var json1 = JSON.parse(userdata);
-		if (req.body.password == json1.password) {
-			res.cookie('username', req.body.username, { maxAge: 900000000, httpOnly: true });
-			res.cookie('user', '1', { maxAge: 900000000, httpOnly: true });
-			res.redirect('/');
-		}
+	if(!server_mode){
+		getUser(req.body.username);
+		var options = {
+  				uri: remote + 'api/authenticate',
+  				method: 'POST',
+  				json: {
+    				"username": req.body.username,
+    				"password": req.body.password
+  				}
+			};
+
+		request(options, function (error, response, body) {
+  			if(response.body == 'Success'){
+  				res.cookie('username', req.body.username, { maxAge: 900000000, httpOnly: true });
+				res.cookie('user', '1', { maxAge: 900000000, httpOnly: true });
+				res.redirect('/');
+  			}
+		});
 	}
-	else { res.send("Login failed"); }
+	else{
+			if (fs.existsSync('database/account/' + req.body.username + '.json')) {
+			var userdata = fs.readFileSync('database/account/' + req.body.username + '.json');
+			var json1 = JSON.parse(userdata);
+			if (req.body.password == json1.password) {
+				res.cookie('username', req.body.username, { maxAge: 900000000, httpOnly: true });
+				res.cookie('user', '1', { maxAge: 900000000, httpOnly: true });
+				res.redirect('/');
+			}
+		}
+		else { res.send("Login failed"); }
+	}
 })
 
 app.post('/register', function (req, res) {
@@ -334,18 +368,38 @@ app.post('/loginX', function (req, res) {
 })
 
 app.post('/login2X', function (req, res) {
-
 	res.set('Content-Type', 'Text/Html');
-	if (fs.existsSync('database/account/' + req.body.username + '.json')) {
-		var userdata = fs.readFileSync('database/account/' + req.body.username + '.json');
-		var json1 = JSON.parse(userdata);
-		if (req.body.password == json1.password) {
-			res.cookie('username', req.body.username, { maxAge: 900000000, httpOnly: true });
-			res.cookie('user', '1', { maxAge: 900000000, httpOnly: true });
-			res.redirect('/r?id=1&tutorial_user=yes');
-		}
+	if(!server_mode){
+		getUser(req.body.username);
+		var options = {
+  				uri: remote + 'api/authenticate',
+  				method: 'POST',
+  				json: {
+    				"username": req.body.username,
+    				"password": req.body.password
+  				}
+			};
+
+		request(options, function (error, response, body) {
+  			if(response.body == 'Success'){
+  				res.cookie('username', req.body.username, { maxAge: 900000000, httpOnly: true });
+				res.cookie('user', '1', { maxAge: 900000000, httpOnly: true });
+				res.redirect('/');
+  			}
+		});
 	}
-	else { res.send("Login failed"); }
+	else {
+			if (fs.existsSync('database/account/' + req.body.username + '.json')) {
+			var userdata = fs.readFileSync('database/account/' + req.body.username + '.json');
+			var json1 = JSON.parse(userdata);
+			if (req.body.password == json1.password) {
+				res.cookie('username', req.body.username, { maxAge: 900000000, httpOnly: true });
+				res.cookie('user', '1', { maxAge: 900000000, httpOnly: true });
+				res.redirect('/r?id=1&tutorial_user=yes');
+			}
+		}
+		else { res.send("Login failed"); }
+	}
 })
 
 app.post('/registerX', function (req, res) {
@@ -414,6 +468,9 @@ app.get('/ban', function (req, res) {
 })
 
 app.get('/profile', function (req, res) {
+	if(!server_mode){
+		if(req.cookies["user"]=='1'){ getUser(req.query.id) }
+	}
 	if (fs.existsSync('database/account/' + req.query.id + '.json')) {
 		var panel = fs.readFileSync('app/panel/dashboard.html');
 		var profile1 = fs.readFileSync('database/profile/' + req.query.id + '.json');
@@ -442,6 +499,10 @@ app.get('/profile', function (req, res) {
 })
 
 app.get('/options', function (req, res) {
+	if(!server_mode){
+		if(req.cookies["user"]=='1'){ getUser(req.cookies["username"]) }
+	}
+
 	var panel = fs.readFileSync('app/panel/option.html');
 	var profile1 = fs.readFileSync('database/profile/' + req.cookies["username"] + '.json');
 	var json1 = JSON.parse(profile1);
@@ -481,7 +542,7 @@ app.post('/options', function (req, res) {
 		
 	if(!server_mode){
 		var options = {
-  			uri: 'http://localhost/api/user',
+  			uri: remote + 'api/profile',
   			method: 'POST',
   			json: {
     			"id": req.cookies["username"],
@@ -510,7 +571,7 @@ app.post('/options2', function (req, res) {
 		
 		if(!server_mode){
 			var options = {
-  				uri: 'http://localhost/api/password',
+  				uri: remote + 'api/account',
   				method: 'POST',
   				json: {
     				"id": req.cookies["username"],
@@ -599,6 +660,15 @@ io.on('connection', function (socket) {
 	socket.on('room7', function (msg) {
 		io.emit('room7', msg);
 		fs.appendFileSync('database/chatroom/7.txt', '<li>' + msg + '</li> \r\n');
+	});
+
+	socket.on('update', function (msg) {
+		if(!server_mode){
+			var updateinfo = JSON.parse(msg);
+			request(remote + 'api/' + updateinfo.type + '/' + updateinfo.id, function (error, response, body) {
+				fs.writeFileSync('database/'+ updateinfo.type +'/' + updateinfo.id + '.json', response.body, { flag: "w+" });
+			});
+		}
 	});
 });
 
