@@ -3,6 +3,7 @@ var express = require("express");
 var cookie1 = require("cookie-parser");
 var bodyParser = require("body-parser");
 var http = require("http");
+var request = require('request');
 var app = express();
 
 var server_config = JSON.parse(fs.readFileSync("config.json"));
@@ -479,7 +480,20 @@ app.post('/options', function (req, res) {
 	fs.writeFileSync('database/profile/' + req.cookies["username"] + '.json', userdata);
 		
 	if(!server_mode){
-		
+		var options = {
+  			uri: 'http://localhost/api/user',
+  			method: 'POST',
+  			json: {
+    			"id": req.cookies["username"],
+    			"profile": json1
+  			}
+		};
+
+		request(options, function (error, response, body) {
+  			if (!error && response.statusCode == 200) {
+    			console.log(body.id) // Print the shortened url.
+  			}
+		});
 	}
 
 	res.redirect('/options');
@@ -495,7 +509,22 @@ app.post('/options2', function (req, res) {
 		fs.writeFileSync('database/account/' + req.cookies["username"] + '.json', userdata);
 		
 		if(!server_mode){
-		
+			var options = {
+  				uri: 'http://localhost/api/password',
+  				method: 'POST',
+  				json: {
+    				"id": req.cookies["username"],
+    				"password_old": req.body.password_old,
+    				"password_1": req.body.password_1,
+    				"password_2": req.body.password_2
+  				}
+			};
+
+			request(options, function (error, response, body) {
+  				if (!error && response.statusCode == 200) {
+    				console.log(body.id) // Print the shortened url.
+  				}
+			});
 		}
 
 		res.redirect('/options');
