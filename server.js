@@ -10,6 +10,7 @@ var server_config = JSON.parse(fs.readFileSync("config.json"));
 const port = process.env.PORT || server_config.port;
 var server_mode = server_config.server_mode;
 var remote = server_config.remote;
+var chatdata = '';
 
 var server = app.listen(port, function () {
 	var host = server.address().address;
@@ -604,12 +605,25 @@ app.get('/r', function (req, res) {
 		if (json1.banned == 1) { type = 'Banned' }
 	}
 
+	
 	if (req.query.id != undefined) {
 		panel = fs.readFileSync('app/panel/chatbox.html');
-		chatdata = fs.readFileSync('database/chatroom/' + req.query.id + '.txt');
+		if(!server_mode){
+			request(remote + 'api/message/' + req.query.id, (error, response, body) => {
+				fs.writeFileSync('database/chatroom/' + req.query.id + '.json', response.body, { flag: "w+" });
+				// chatdata = response.body.toString();
+				// panel = panel.toString().replace('madcatchatdata', chatdata);
+				// var html = mainpage(panel, req.cookies.username, 'room' + req.query.id.toString(), type);
+				// res.send(html);
+			});
+			chatdata = fs.readFileSync('database/chatroom/' + req.query.id + '.txt');
+		}
+		else{
+			chatdata = fs.readFileSync('database/chatroom/' + req.query.id + '.txt');
+		}
 		panel = panel.toString().replace('madcatchatdata', chatdata);
 		var html = mainpage(panel, req.cookies.username, 'room' + req.query.id.toString(), type);
-
+		// res.send(html);
 	}
 	else {
 		//res.redirect('/');
@@ -617,6 +631,7 @@ app.get('/r', function (req, res) {
 		chatdata = fs.readFileSync('database/chatroom/r.txt');
 		panel = panel.toString().replace('madcatchatdata', chatdata);
 		var html = mainpage(panel, req.cookies.username, 'room', type);
+		// res.send(html);
 	}
 	res.send(html);
 })
