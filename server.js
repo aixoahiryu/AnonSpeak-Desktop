@@ -610,7 +610,7 @@ app.get('/r', function (req, res) {
 		panel = fs.readFileSync('app/panel/chatbox.html');
 		if(!server_mode){
 			request(remote + 'api/message/' + req.query.id, (error, response, body) => {
-				fs.writeFileSync('database/chatroom/' + req.query.id + '.json', response.body, { flag: "w+" });
+				fs.writeFileSync('database/chatroom/' + req.query.id + '.txt', response.body, { flag: "w+" });
 				// chatdata = response.body.toString();
 				// panel = panel.toString().replace('madcatchatdata', chatdata);
 				// var html = mainpage(panel, req.cookies.username, 'room' + req.query.id.toString(), type);
