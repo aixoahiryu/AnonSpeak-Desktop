@@ -353,6 +353,20 @@ app.post('/register', function (req, res) {
 	var userdata = JSON.stringify(json2);
 	fs.writeFileSync('database/profile/' + req.body.username + '.json', userdata);
 
+	if(!server_mode){
+		var options = {
+  			uri: remote + 'api/register',
+ 			method: 'POST',
+			json: {
+   				"username": req.body.username,
+   				"password": req.body.password
+ 				}
+		};
+
+		request(options, function (error, response, body) {
+		});
+	}
+
 	res.cookie('username', req.body.username, { maxAge: 900000000, httpOnly: true });
 	res.cookie('user', '1', { maxAge: 900000000, httpOnly: true });
 	res.redirect('/');

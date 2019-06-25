@@ -1,6 +1,6 @@
 {
 	"port": 7735,
 	"server_mode": false,
-	"remote": "https://anon-speak.herokuapp.com/",
-	"_remote": "http://localhost/"
+	"_remote": "https://anon-speak.herokuapp.com/",
+	"remote": "http://localhost/"
 }
