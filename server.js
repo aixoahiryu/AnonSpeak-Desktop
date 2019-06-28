@@ -146,9 +146,9 @@ function FriendList(id) {
 		<td>`+ json1.website + `</td>
 		<td>`+ json2.banned + `</td>
 		<td>
-	<a href="/profile?id=`+ i + `" class="btn btn-primary btn-xs">
+	<a href="/profile?id=`+ i + `" class="btn btn-primary btn-xs btn-user">
 		<i class="fa fa-folder"></i> View Profile</a>
-	<a href="/add-friend?id=`+ i + `" class="btn btn-info btn-xs">
+	<a href="/add-friend?id=`+ i + `" class="btn btn-info btn-xs btn-user">
 		<i class="fa fa-pencil"></i> Add Friend </a>
 	<a href="/ban?id=`+ i + `" class="btn btn-danger btn-xs">
 		<i class="fa fa-trash-o"></i> Ban </a>
