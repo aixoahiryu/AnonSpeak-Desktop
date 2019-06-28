@@ -31,6 +31,8 @@
 <script src="../vendors/jquery-1.11.1.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.js"></script>
 <script>
+	updateOnlineStatus();
+
 	function anonIntro() {
 		var intro = introJs();
 		intro.setOptions({
@@ -196,10 +198,7 @@
 		var href = prompt('Liên kết', 'http://');
 		$('#m').val('<a href="' + href + '" style="color:red">' + href + '</a>');
 	});
-</script>
-<!--<script src="../vendors/socket.io-client/main.js"></script>-->
 
-<script>
 	function img_popup(width, height, url) {
 		var leftPosition, topPosition;
 		if (typeof width == 'undefined') width = 400;
