@@ -164,6 +164,9 @@
 		});
 		madcatsecondsocketupdate
 		// madcatsecondmsg
+		// madcatonlinestatus
+		window.addEventListener('online',  updateOnlineStatus);
+		window.addEventListener('offline',  updateOnlineStatus);
 
 		//if($('#type').text() == 'Administrator') $('#footer1').remove();
 
@@ -202,14 +205,35 @@
 		if (typeof width == 'undefined') width = 400;
 		if (typeof height == 'undefined') height = window.screen.height / 2;
 		if (typeof url == 'undefined') url = 'https://www.upsieutoc.com/';
-		//Allow for borders.
+
 		leftPosition = (window.screen.width / 2) - ((width / 2) + 10);
-		//Allow for title and status bars.
 		topPosition = (window.screen.height / 2) - ((height / 2) + 50);
-		//Open the window.
+
 		window.open(url, "Upload", "status=no,height=" + height + ",width=" + width + ",resizable=yes,left=" + leftPosition + ",top=" + topPosition + ",screenX=" + leftPosition + ",screenY=" + topPosition + ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no");
 		return false;
 	}
+
+	const { ipcRenderer } = require('electron')
+  	const updateOnlineStatus = () => {
+  		if(!navigator.onLine){
+  			$('#btn-img').hide();
+			$('#btn-href').hide();
+			$('form#chatio').hide();
+			$('#optionsubmit').hide();
+			$('#passwordsubmit').hide();
+			$('#addfriend').hide();
+  		}
+  		else{
+  			$('#btn-img').show();
+			$('#btn-href').show();
+			$('form#chatio').show();
+			$('#optionsubmit').show();
+			$('#passwordsubmit').show();
+			$('#addfriend').show();
+  		}
+
+    	ipcRenderer.send('online-status-changed', navigator.onLine ? 'online' : 'offline');
+  	}
 </script>
 </body>
 
