@@ -448,6 +448,20 @@ app.post('/registerX', function (req, res) {
 
 app.get('/add-friend', function (req, res) {
 	if (req.query.id != '' && fs.existsSync('database/account/' + req.cookies["username"] + '.json')) {
+		if(!server_mode){
+			var options = {
+  				uri: remote + 'api/add-friend',
+  				method: 'POST',
+  				json: {
+    				"id": req.cookies["username"],
+    				"friendid": req.query.id
+  				}
+			};
+
+			request(options, function (error, response, body) {
+  				// if(response.body == 'Success'){	}
+		});
+		}
 		if (fs.existsSync('database/friendlist/' + req.cookies["username"] + '.json') == false) {
 			fs.appendFileSync('database/friendlist/' + req.cookies["username"] + '.json', req.query.id + ',', { flag: "a+" });
 		}
