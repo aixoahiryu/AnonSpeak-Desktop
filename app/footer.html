@@ -212,8 +212,8 @@
 		return false;
 	}
 
-	const { ipcRenderer } = require('electron')
-  	const updateOnlineStatus = () => {
+	// const { ipcRenderer } = require('electron')
+  	function updateOnlineStatus() {
   		if(!navigator.onLine){
   			$('#btn-img').hide();
 			$('#btn-href').hide();
@@ -233,7 +233,7 @@
 			$('.btn-user').show();
   		}
 
-    	ipcRenderer.send('online-status-changed', navigator.onLine ? 'online' : 'offline');
+    	// ipcRenderer.send('online-status-changed', navigator.onLine ? 'online' : 'offline');
   	}
 </script>
 </body>
