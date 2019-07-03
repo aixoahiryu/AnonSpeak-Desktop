@@ -31,6 +31,8 @@
 <script src="../vendors/jquery-1.11.1.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.js"></script>
 <script>
+	updateOnlineStatus();
+
 	function anonIntro() {
 		var intro = introJs();
 		intro.setOptions({
@@ -164,6 +166,9 @@
 		});
 		madcatsecondsocketupdate
 		// madcatsecondmsg
+		// madcatonlinestatus
+		window.addEventListener('online',  updateOnlineStatus);
+		window.addEventListener('offline',  updateOnlineStatus);
 
 		//if($('#type').text() == 'Administrator') $('#footer1').remove();
 
@@ -193,23 +198,43 @@
 		var href = prompt('Liên kết', 'http://');
 		$('#m').val('<a href="' + href + '" style="color:red">' + href + '</a>');
 	});
-</script>
-<!--<script src="../vendors/socket.io-client/main.js"></script>-->
 
-<script>
 	function img_popup(width, height, url) {
 		var leftPosition, topPosition;
 		if (typeof width == 'undefined') width = 400;
 		if (typeof height == 'undefined') height = window.screen.height / 2;
 		if (typeof url == 'undefined') url = 'https://www.upsieutoc.com/';
-		//Allow for borders.
+
 		leftPosition = (window.screen.width / 2) - ((width / 2) + 10);
-		//Allow for title and status bars.
 		topPosition = (window.screen.height / 2) - ((height / 2) + 50);
-		//Open the window.
+
 		window.open(url, "Upload", "status=no,height=" + height + ",width=" + width + ",resizable=yes,left=" + leftPosition + ",top=" + topPosition + ",screenX=" + leftPosition + ",screenY=" + topPosition + ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no");
 		return false;
 	}
+
+	const { ipcRenderer } = require('electron')
+  	const updateOnlineStatus = () => {
+  		if(!navigator.onLine){
+  			$('#btn-img').hide();
+			$('#btn-href').hide();
+			$('form#chatio').hide();
+			$('#optionsubmit').hide();
+			$('#passwordsubmit').hide();
+			$('#addfriend').hide();
+			$('.btn-user').hide();
+  		}
+  		else{
+  			$('#btn-img').show();
+			$('#btn-href').show();
+			$('form#chatio').show();
+			$('#optionsubmit').show();
+			$('#passwordsubmit').show();
+			$('#addfriend').show();
+			$('.btn-user').show();
+  		}
+
+    	ipcRenderer.send('online-status-changed', navigator.onLine ? 'online' : 'offline');
+  	}
 </script>
 </body>
 

@@ -146,9 +146,9 @@ function FriendList(id) {
 		<td>`+ json1.website + `</td>
 		<td>`+ json2.banned + `</td>
 		<td>
-	<a href="/profile?id=`+ i + `" class="btn btn-primary btn-xs">
+	<a href="/profile?id=`+ i + `" class="btn btn-primary btn-xs btn-user">
 		<i class="fa fa-folder"></i> View Profile</a>
-	<a href="/add-friend?id=`+ i + `" class="btn btn-info btn-xs">
+	<a href="/add-friend?id=`+ i + `" class="btn btn-info btn-xs btn-user">
 		<i class="fa fa-pencil"></i> Add Friend </a>
 	<a href="/ban?id=`+ i + `" class="btn btn-danger btn-xs">
 		<i class="fa fa-trash-o"></i> Ban </a>
@@ -448,6 +448,20 @@ app.post('/registerX', function (req, res) {
 
 app.get('/add-friend', function (req, res) {
 	if (req.query.id != '' && fs.existsSync('database/account/' + req.cookies["username"] + '.json')) {
+		if(!server_mode){
+			var options = {
+  				uri: remote + 'api/add-friend',
+  				method: 'POST',
+  				json: {
+    				"id": req.cookies["username"],
+    				"friendid": req.query.id
+  				}
+			};
+
+			request(options, function (error, response, body) {
+  				// if(response.body == 'Success'){	}
+		});
+		}
 		if (fs.existsSync('database/friendlist/' + req.cookies["username"] + '.json') == false) {
 			fs.appendFileSync('database/friendlist/' + req.cookies["username"] + '.json', req.query.id + ',', { flag: "a+" });
 		}
